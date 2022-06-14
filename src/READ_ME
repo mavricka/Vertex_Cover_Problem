@@ -1,0 +1,61 @@
+Vertex Cover Problem
+Given a graph G of vertices and edges, a vertex cover is a set of vertices in G such that each edge in G has at least
+one of its' vertices in the cover. This project generates the running times of an approximate solution and for finding
+out if there is a vertex cover of size integer k for given graphs.
+
+
+User Manual
+The code is all run from the main method within the main class. When this is run, first the test cases from
+Test.java are automatically run and then a text dialogue with the user is begun. The user is asked if
+they want to run the brute force and approximate algorithms on a graph. If ’no’ is entered the process is
+finished, otherwise the user is prompted to input the graph information. They enter the number n of vertices
+in the graph, then each edge is entered with the form ’u,v’ (each on a single line) where the vertices are
+number 0 through n − 1. If ’0,0’ is entered then no more edges are to be added to the graph. Lastly, the
+user inputs k, the size of vertex cover we want to determine exists for the graph. The algorithms will be run,
+with their running times and generated vertex covers being printed to the screen. The user is once again
+prompted if they want to test a graph and the process repeats until they are done.
+
+
+Brute Force Algorithm:
+The brute force algorithm checks all possible sets of vertices of size k for graph G until an acceptable vertex
+cover is found.
+To begin the algorithm generates all the possible combinations of vertices (sets) of size k. For a combination
+of size k and n vertices to choose from, the algorithm initializes an array A of length k filled with the
+first k vertices of the graph. A while loop then runs generating combinations until there are no more. Within
+the loop a representation of A, where for each vertex in A an array of length n has 1 at the corresponding
+index, is added to a list of all possible vertex sets to check. Then, A is changed to the next combination
+by finding the vertex furthest right in the array that can be incremented (at index j of the array it can be
+incremented if A[j] < n − k + j), increments it then sets the indices i of A following as A[i] = A[i − 1] + 1.
+Generating the array of length n representation takes k steps (since we loop through the vertices in A), and
+at most k values in A will be updated for the next combination. Since the while loop executes once for every
+possible combination 􀀀 and each iteration takes O(k) time, the running time for generating the combination is O(n^k k).
+The algorithm then checks the generated combinations until it finds an acceptable vertex cover of size k,
+or go through all of them if one does not exist. To do this a for loop iterates for each combination, checking
+if it is acceptable (returning the combination as the vertex cover if it is). We note that the edges of G are
+stored in an adjacency list E, where the list at E[i] are all the vertices that share an edge with vertex i. For
+each combination, stored in array C, we want to check whether each edge of G is covered or not. Looping
+through each vertex u of the graph, if C[u] is 1 we know that u is in the set we are checking and that all
+edges with u will be covered. Otherwise, we loop through each vertex v in E[u] to check if the edge is covered
+(C[v] = 1). Using this method, we need check if a vertex is in the set at most n + |E| times, less if a edge is
+not covered since we do not need to check further edges for that set (it is already not a vertex cover). If a
+vertex cover is acceptable, then C is looped over to get the vertices of the cover, add them to a list and return
+it as a vertex cover of size k (this take n steps). The running time for one loop iteration is thus O(n + |E|).
+􀀀Since there is at most one iteration per combination the total running time of this part of the algorithm is
+O(n^k (n + |E|)).
+The algorithm, taking into account generating the combinations and checking if any of them form a valid
+vertex cover, has a running time of O(nk(n + k + |E|)).
+
+
+Approximate Algorithm
+The approximate algorithm is essentially an implementation of that given in section 35.1 of the CLRS textbook to
+approximate a vertex cover of a graph.
+The algorithm works by iterating through the edges of the graph E until an uncovered vertex is found,
+which is added to the vertex cover, or they are all covered. We initiate an array C of 0s with length n (where
+n is the total number of vertices in the graph), this will represent the vertices in the cover (if C[i] is 1, then
+i is in the cover). We iterate over the vertices of the graph. For each vertex u, we check if u is in the vertex
+cover, if it is then the edges in E[u] are covered and we can move on to the next vertex. Otherwise, we find
+the first vertex v in E[u] such that C[v] = 0 (i.e., the edge (u, v) that is uncovered), if it exists. We then add
+u and v to the vertex cover, i.e., C[u] and C[v] are set to 1. We then move onto the next vertex iteration u+1
+since all further edges with u are covered. After the loop is finished, we add each vertex i such that C[i] = 1
+to a list that is returned of the vertex cover. This algorithm, similar to the check of a single combination of
+vertices being an appropriate cover in the brute force algorithm, has a running time of O(n + |E|).
